@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BandController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -25,9 +26,11 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get("/bands", [BandController::class, "showBands"])->middleware(['auth', 'verified']);
+Route::get("/bands", [BandController::class, "showBands"])->middleware(['auth', 'verified'])->name("bands");
 
 Route::post("band-update", [BandController::class, "updateBand"]);
+
+Route::get("/products", [ProductController::class, "showProducts"])->middleware(['auth', 'verified'])->name("products");
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

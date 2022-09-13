@@ -21,7 +21,10 @@ class BandsDB extends React.Component {
 
     render() {
         return (
-            <Bands csrf_token={this.props.csrf_token} bandsInit={this.bandsInit}></Bands>
+            <Bands 
+            auth={this.props.auth} errors={this.props.errors}
+            csrf_token={this.props.csrf_token} bandsInit={this.bandsInit}>
+            </Bands>
         )
     }
 

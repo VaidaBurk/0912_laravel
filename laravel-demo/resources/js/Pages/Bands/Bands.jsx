@@ -1,10 +1,13 @@
 import React from "react";
+import Authenticated from '@/Layouts/AuthenticatedLayout';
 
 class Bands extends React.Component {
 
     constructor() {
         super();
         this.state = {
+            auth: null,
+            errors: null,
             csrf_token: "",
             bands: [],
             bandsInit: [],
@@ -35,10 +38,11 @@ class Bands extends React.Component {
     componentDidMount() {
         this.props.bandsInit(this);
         this.setToken(this.props.csrf_token);
+        this.setState({ auth: this.props.auth, errors: this.props.errors });
     }
-    
+
     setToken = (token) => {
-        this.setState({csrf_token: token});
+        this.setState({ csrf_token: token });
     }
 
     setBandTable(bandsLoad) {
@@ -47,10 +51,10 @@ class Bands extends React.Component {
             initBands.push(Object.assign({}, obj));
         })
         const pagesNo = Math.floor(bandsLoad.length / 10);
-        this.setState({ 
-            bands: initBands, 
-            bandsInit: bandsLoad, 
-            numberOfPages: pagesNo 
+        this.setState({
+            bands: initBands,
+            bandsInit: bandsLoad,
+            numberOfPages: pagesNo
         }, this.setPageShown);
     }
 
@@ -107,7 +111,7 @@ class Bands extends React.Component {
         fetch(link, {
             method: "POST",
             headers: headers,
-            body: JSON.stringify({"bands": bandsToSave})
+            body: JSON.stringify({ "bands": bandsToSave })
         }).then(function (response) {
             response.json().then((body) => {
                 if (self.state.editable) {
@@ -162,71 +166,77 @@ class Bands extends React.Component {
     render() {
 
         return (
-            <div className='pb-3 px-5 m-5'>
-                <form method="POST">
-                    <input name="_token" hidden value={this.state.csrf_token}></input>
-                    {/* {this.state.user.roleID === 1 &&  */}
-                    <div>
-                        <button className="btn btn-outline-info my-2" type="button" onClick={this.setEditable}>Edit</button>
-                        <button className="btn btn-outline-info m-2" type="button" onClick={this.onChangeSave}>Save updates</button>
-                        <button className="btn btn-outline-danger my-2" type="button" onClick={this.onCancel}>Cancel updates</button> 
-                    </div>
-                    {/* } */}
+            <>
+                {!(this.state.auth === null) &&
+                    <Authenticated auth={this.state.auth} errors={this.state.errors} header={""}>
+                        <div className='pb-3 px-5 m-5'>
+                            <form method="POST">
+                                <input name="_token" hidden value={this.state.csrf_token}></input>
+                                {/* {this.state.user.roleID === 1 &&  */}
+                                <div>
+                                    <button className="btn btn-outline-info my-2" type="button" onClick={this.setEditable}>Edit</button>
+                                    <button className="btn btn-outline-info m-2" type="button" onClick={this.onChangeSave}>Save updates</button>
+                                    <button className="btn btn-outline-danger my-2" type="button" onClick={this.onCancel}>Cancel updates</button>
+                                </div>
+                                {/* } */}
 
-                    <nav>
-                        <ul className="pagination my-3">
-                            {this.generatePageItems()}
-                        </ul>
-                    </nav>
+                                <nav>
+                                    <ul className="pagination my-3">
+                                        {this.generatePageItems()}
+                                    </ul>
+                                </nav>
 
-                    <table className='table table-hover table-striped table-borderless'>
-                        <thead className='table-dark'>
-                            <tr>
-                                <th><div>Title</div></th>
-                                <th>Lead artist</th>
-                                <th>Genres</th>
-                                <th>Year of foundation</th>
-                                <th>Origin</th>
-                                <th>Website</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {
-                                !(this.state.bandsShown === undefined) && this.state.bandsShown.map(band => {
-                                    return (
-                                        <tr key={band.Id} onChange={(e) => this.onInputChange(e, band.Id)}>
-                                            <td>
-                                                <div hidden={this.state.editable}>{band.title}</div>
-                                                <input hidden={!this.state.editable} defaultValue={band.title} fieldname="title"></input>
-                                            </td>
-                                            <td>
-                                                <div hidden={this.state.editable}>{band.leadArtist}</div>
-                                                <input hidden={!this.state.editable} defaultValue={band.leadArtist} fieldname="leadArtist"></input>
-                                            </td>
-                                            <td>
-                                                <div hidden={this.state.editable}>{band.genres}</div>
-                                                <input hidden={!this.state.editable} defaultValue={band.genres} fieldname="genres"></input>
-                                            </td>
-                                            <td>
-                                                <div hidden={this.state.editable}>{band.yearFoundation}</div>
-                                                <input hidden={!this.state.editable} defaultValue={band.yearFoundation} fieldname="yearFoundation"></input>
-                                            </td>
-                                            <td>
-                                                <div hidden={this.state.editable}>{band.origin}</div>
-                                                <input hidden={!this.state.editable} defaultValue={band.origin} fieldname="origin"></input>
-                                            </td>
-                                            <td>
-                                                <div hidden={this.state.editable}>{band.website}</div>
-                                                <input hidden={!this.state.editable} defaultValue={band.website} fieldname="website"></input>
-                                            </td>
+                                <table className='table table-hover table-striped table-borderless'>
+                                    <thead className='table-dark'>
+                                        <tr>
+                                            <th><div>Title</div></th>
+                                            <th>Lead artist</th>
+                                            <th>Genres</th>
+                                            <th>Year of foundation</th>
+                                            <th>Origin</th>
+                                            <th>Website</th>
                                         </tr>
-                                    );
-                                })
-                            }
-                        </tbody>
-                    </table>
-                </form>
-            </div>
+                                    </thead>
+                                    <tbody>
+                                        {
+                                            !(this.state.bandsShown === undefined) && this.state.bandsShown.map(band => {
+                                                return (
+                                                    <tr key={band.Id} onChange={(e) => this.onInputChange(e, band.Id)}>
+                                                        <td>
+                                                            <div hidden={this.state.editable}>{band.title}</div>
+                                                            <input hidden={!this.state.editable} defaultValue={band.title} fieldname="title"></input>
+                                                        </td>
+                                                        <td>
+                                                            <div hidden={this.state.editable}>{band.leadArtist}</div>
+                                                            <input hidden={!this.state.editable} defaultValue={band.leadArtist} fieldname="leadArtist"></input>
+                                                        </td>
+                                                        <td>
+                                                            <div hidden={this.state.editable}>{band.genres}</div>
+                                                            <input hidden={!this.state.editable} defaultValue={band.genres} fieldname="genres"></input>
+                                                        </td>
+                                                        <td>
+                                                            <div hidden={this.state.editable}>{band.yearFoundation}</div>
+                                                            <input hidden={!this.state.editable} defaultValue={band.yearFoundation} fieldname="yearFoundation"></input>
+                                                        </td>
+                                                        <td>
+                                                            <div hidden={this.state.editable}>{band.origin}</div>
+                                                            <input hidden={!this.state.editable} defaultValue={band.origin} fieldname="origin"></input>
+                                                        </td>
+                                                        <td>
+                                                            <div hidden={this.state.editable}>{band.website}</div>
+                                                            <input hidden={!this.state.editable} defaultValue={band.website} fieldname="website"></input>
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })
+                                        }
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </Authenticated>
+                }
+            </>
         );
     }
 }
