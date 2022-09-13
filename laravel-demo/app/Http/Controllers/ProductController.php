@@ -14,4 +14,11 @@ class ProductController extends Controller
         $products = Product::all();
         return Inertia::render('Products', ["products"=>$products, "csrf_token"=>csrf_token()]);
     }
+
+    public function buy(Request $request){
+        $basket = $request->basket;
+        foreach($basket as $product){
+            Product::where("id", $product["id"])->update(["stock_quantity"=>$product["quantity"]]);
+        }
+    }
 }
