@@ -1,3 +1,4 @@
+import ProductButton from "@/Components/ProductButton";
 import Authenticated from "@/Layouts/AuthenticatedLayout"
 import { useEffect, useState } from "react";
 
@@ -18,8 +19,7 @@ export default function Products(props) {
         setProducts(productsL);
     }, [])
 
-    const addProduct = (event) => {
-        const id = Number(event.target.getAttribute("productid"));
+    const addProduct = (id) => {
         let basket = JSON.parse(sessionStorage.getItem("basket"));
 
         if(basket === null){
@@ -61,14 +61,14 @@ export default function Products(props) {
                     {(products !== null) && products.map((product) => {
                         return (
                             <>
-                            <div className="col">
+                            <div className="col" key={product.id}>
                                 <div className="card">
                                     <img src="..." className="card-img-top" alt="..."></img>
                                         <div className="card-body">
                                             <h5 className="card-title">{product.name}</h5>
                                             <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                                            <h6>On stock: {product.stock_quantity}</h6>
-                                            <button productid={product.id} onClick={(event) => {addProduct(event)}} className="btn btn-primary">Add to basket</button>
+                                            <h6 className="my-3">On stock: {product.stock_quantity}</h6>
+                                            <ProductButton productId={product.id} addProduct={addProduct}></ProductButton>
                                         </div>
                                 </div>
                             </div>

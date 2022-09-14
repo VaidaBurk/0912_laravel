@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BandController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -37,5 +38,7 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::post('/buy', [ProductController::class, "buy"]);
+
+Route::get('/order', [OrderController::class, "showOrder"]);
 
 require __DIR__.'/auth.php';

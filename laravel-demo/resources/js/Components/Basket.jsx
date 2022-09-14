@@ -16,10 +16,11 @@ export default function Basket(props) {
     const clearBasket = () => {
         sessionStorage.setItem("basket", JSON.stringify([]));
         changeProducts([]);
+        sessionStorage.removeItem("products");
+        window.location.reload();
     }
 
     const onBuy = () => {
-        let self = this;
         const headers = new Headers();
         headers.append("Content-type", "application/json");
         headers.append("X-CSRF-TOKEN", props.csrf_token)
@@ -29,10 +30,7 @@ export default function Basket(props) {
             headers: headers,
             body: JSON.stringify({ "basket": products })
         }).then((response) => {
-            response.json().then((body) => {
-                alert(body);
-                clearBasket();
-            })
+            clearBasket();
         })
     }
 
@@ -40,7 +38,7 @@ export default function Basket(props) {
         <div className="container">
             {products.map((product) => {
                 return (
-                    <div className="row">
+                    <div className="row" kwy={product.id}>
                         <div className="col">
                             {product.name}
                         </div>
@@ -50,7 +48,9 @@ export default function Basket(props) {
                     </div>)
             })
             }
-            <button className="btn btn-secondary" onClick={onBuy}>Buy</button>
+            <button className="btn btn-outline-secondary btn-sm mr-2 my-2" onClick={onBuy}>Buy</button>
+            <button className="btn btn-outline-warning btn-sm my-2" onClick={clearBasket}>Clear</button>
+
         </div>
     )
 }
