@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Redirect;
 
 class OrderController extends Controller
 {
-    public static function createOrder($products) {
+    public static function createOrder($products)  : int
+    {
         $order = new Order();
         $order->user_id = Auth::id();
         $order->save();
@@ -24,6 +25,8 @@ class OrderController extends Controller
             $orderItem->quantity = $product["quantity"];
             $orderItem->save();
         }
+
+        return $order->id;
     }
 
     public function showOrder(Request $request) {

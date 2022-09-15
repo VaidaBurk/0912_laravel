@@ -3,9 +3,12 @@
 use App\Http\Controllers\BandController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
+use App\Mail\OrderMail;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Symfony\Component\Mailer\Exception\TransportException;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,5 +43,15 @@ Route::get('/dashboard', function () {
 Route::post('/buy', [ProductController::class, "buy"]);
 
 Route::get('/order', [OrderController::class, "showOrder"]);
+
+Route::get('/sendOrderEmail/{id}', function($id) {
+    try {
+        Mail::to("v.burkauskaite@gmail.com")->send(new OrderMail($id));
+        throw new TransportException("Manualy triggered error."); 
+    }
+    catch(Exception $e) {
+        return view("error", ["error_text"=>$e->getMessage()]);
+    }
+});
 
 require __DIR__.'/auth.php';

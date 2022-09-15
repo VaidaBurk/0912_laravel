@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash, faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 
 export default function Basket(props) {
     const [products, changeProducts] = useState([])
@@ -34,6 +36,28 @@ export default function Basket(props) {
         })
     }
 
+    const removeProductFromBasket = (id) => {
+        let basket = JSON.parse(sessionStorage.getItem("basket"));
+
+        const productInBasket = basket.find((product) => {
+            return product.id == id;
+        })
+        
+        const productsUpdated = JSON.parse(sessionStorage.getItem("products"));
+        const product = productsUpdated.find((product) => {
+            return product.id === id;
+        })
+
+        product.stock_quantity += productInBasket.quantity;
+        basket = basket.filter(function (product) {
+            return product.id !== id;
+        })
+
+        sessionStorage.setItem("products", JSON.stringify(productsUpdated));
+        sessionStorage.setItem("basket", JSON.stringify(basket));
+        window.location.reload();
+    }
+
     return (
         <div className="container">
             {products.map((product) => {
@@ -43,7 +67,14 @@ export default function Basket(props) {
                             {product.name}
                         </div>
                         <div className="col">
+                                <FontAwesomeIcon icon={faMinus} />
                             {product.quantity}
+                                <FontAwesomeIcon icon={faPlus} />
+                        </div>
+                        <div className="col">
+                            <a onClick={() => { removeProductFromBasket(product.id) }}>
+                                <FontAwesomeIcon icon={faTrash} />
+                            </a>
                         </div>
                     </div>)
             })

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderMail;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 
@@ -19,9 +21,12 @@ class ProductController extends Controller
     public function buy(Request $request)
     {
         $basket = $request->basket;
-        OrderController::createOrder($basket);
+        $orderId = OrderController::createOrder($basket);
+
         foreach($basket as $product){
             Product::where("id", $product["id"])->update(["stock_quantity" => $product["stockquantity"]]);
         }
+
+        Mail::to(Auth::user())->send(new OrderMail($orderId));
     }
 }

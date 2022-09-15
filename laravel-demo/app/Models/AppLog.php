@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OrderItem extends Model
+class AppLog extends Model
 {
-    protected $table = "order_items";
-    protected $primaryKey = "id";
+    protected $table = 'app_log';
+    protected $primaryKey = 'id';
     public $incrementing = true;
 }

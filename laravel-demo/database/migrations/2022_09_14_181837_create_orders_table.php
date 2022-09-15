@@ -43,5 +43,6 @@ return new class extends Migration
     }
 };
 
+//php artisan make:migration name
 //php artisan migrate
 //php artisan migrate:rollback

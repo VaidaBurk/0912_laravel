@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Models\AppLog;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 
@@ -44,7 +45,10 @@ class Handler extends ExceptionHandler
     public function register()
     {
         $this->reportable(function (Throwable $e) {
-            //
+            $appLog = new AppLog();
+            $appLog->stack_trace = $e->getTraceAsString();
+            $appLog->text = $e->getMessage();
+            $appLog->save();
         });
     }
 }
